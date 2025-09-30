@@ -9,7 +9,7 @@
     "start": "next start",
     "lint": "eslint",
     "predeploy": "npm run build",
-   "deploy": "gh-pages -d out -b main"
+    "deploy": "gh-pages -d out --repo https://github.com/meko568/portfolio.git"
   },
   "dependencies": {
     "next": "15.5.4",
