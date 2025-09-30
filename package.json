@@ -4,12 +4,12 @@
   "private": true,
   "homepage": "https://meko568.github.io/my-portfolio",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+  "dev": "next dev",
+  "build": "next build",
+  "start": "next start",
+  "lint": "eslint",
+  "predeploy": "npm run build",
+  "deploy": "gh-pages -d out"
   },
   "dependencies": {
     "next": "15.5.4",
