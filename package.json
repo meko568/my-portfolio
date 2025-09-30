@@ -2,14 +2,14 @@
   "name": "portfolio",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://meko568.github.io/portfolio",
+  "homepage": "https://meko568.github.io/my-portfolio",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d out --repo https://github.com/meko568/portfolio.git"
+    "deploy": "gh-pages -d build"
   },
   "dependencies": {
     "next": "15.5.4",
