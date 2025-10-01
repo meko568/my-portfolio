@@ -4,6 +4,7 @@ const repo = 'my-portfolio';
 
 const nextConfig = {
   output: 'export',
+  distDir: 'out',
   basePath: isProd ? `/${repo}` : '',
   assetPrefix: isProd ? `/${repo}/` : '',
   images: {

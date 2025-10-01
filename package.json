@@ -5,12 +5,12 @@
   "homepage": "https://meko568.github.io/my-portfolio",
   "scripts": {
     "dev": "next dev",
-    "build": "next build && next export -o docs",
-    "postbuild": "touch docs/.nojekyll && echo 'meko568.github.io/my-portfolio' > docs/CNAME",
+    "build": "next build && next export",
+    "postbuild": "touch out/.nojekyll && echo 'meko568.github.io/my-portfolio' > out/CNAME",
     "start": "next start",
     "lint": "eslint .",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d docs -t true"
+    "deploy": "gh-pages -d out -t true"
   },
   "dependencies": {
     "next": "15.5.4",
