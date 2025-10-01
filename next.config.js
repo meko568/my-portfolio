@@ -1,17 +1,15 @@
 /** @type {import('next').NextConfig} */
 const isProd = process.env.NODE_ENV === 'production';
-const repo = 'my-portfolio';
 
 const nextConfig = {
   output: 'export',
   distDir: 'out',
-  basePath: isProd ? `/${repo}` : '',
-  assetPrefix: isProd ? `/${repo}/` : '',
+  basePath: isProd ? '/my-portfolio' : '',
+  assetPrefix: isProd ? '/my-portfolio/' : '',
   images: {
-    unoptimized: true, // Required for static exports
+    unoptimized: true, // required for static export
   },
   trailingSlash: true,
-  generateBuildId: async () => 'build',
 };
 
 module.exports = nextConfig;
