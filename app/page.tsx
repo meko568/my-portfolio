@@ -1,6 +1,112 @@
 'use client'
-import GithubRepos from '@/components/GithubRepos';
 import styles from './page.module.css';
+
+const projects = [
+  {
+    name: 'Currency Converter',
+    description: 'A currency conversion tool that provides real-time exchange rates with live rate updates, historical data, and responsive design.',
+    repo_url: 'https://github.com/meko568/Currency-Converter',
+    demo_url: 'https://meko568.github.io/Currency-Converter',
+    technologies: ['CSS', 'JavaScript', 'Exchange Rate API'],
+    updated_at: '2025-09-24',
+  },
+  {
+    name: 'Weather App',
+    description: 'Real-time weather application that displays current conditions and temperature with a clean, responsive interface.',
+    repo_url: 'https://github.com/meko568/weather',
+    demo_url: 'https://meko568.github.io/weather',
+    technologies: ['TypeScript', 'Weather API', 'Responsive Design'],
+    updated_at: '2025-09-17',
+  },
+  {
+    name: 'Prayer Times',
+    description: 'Islamic prayer times application showing daily prayer times based on location with monthly schedules and location detection.',
+    repo_url: 'https://github.com/meko568/pray/',
+    demo_url: 'https://meko568.github.io/pray/main',
+    technologies: ['HTML', 'CSS', 'JavaScript', 'Geolocation API'],
+    updated_at: '2025-09-17',
+  },
+  {
+    name: 'Number Guessing Game',
+    description: 'A fun game where players try to guess a random number with score tracking and multiple difficulty levels.',
+    repo_url: 'https://github.com/meko568/guess-thenumber-game',
+    demo_url: 'https://meko568.github.io/guess-thenumber-game/main',
+    technologies: ['HTML', 'CSS', 'JavaScript'],
+    updated_at: '2025-09-10',
+  },
+  {
+    name: 'Hangman Game',
+    description: 'Classic word guessing game with multiple categories, score tracking, and an intuitive interface.',
+    repo_url: 'https://github.com/meko568/hangman-game/',
+    demo_url: 'https://meko568.github.io/hangman-game/main',
+    technologies: ['HTML', 'CSS', 'JavaScript'],
+    updated_at: '2025-09-05',
+  },
+  {
+    name: 'Sudoku',
+    description: 'Interactive Sudoku game with multiple difficulty levels, hints, and a responsive interface.',
+    repo_url: 'https://github.com/meko568/sudoku',
+    demo_url: 'https://meko568.github.io/sudoku',
+    technologies: ['Vue.js', 'CSS', 'Game Logic'],
+    updated_at: '2025-05-16',
+  },
+  {
+    name: '3D Cube Animation',
+    description: 'Interactive 3D cube animation using CSS 3D transforms with smooth animations and controls.',
+    repo_url: 'https://github.com/meko568/cube',
+    demo_url: 'https://meko568.github.io/cube/main',
+    technologies: ['HTML', 'CSS', '3D Transforms'],
+    updated_at: '2025-05-03',
+  },
+  {
+    name: 'Memory Game',
+    description: 'Challenging memory card matching game with multiple difficulty levels and score tracking.',
+    repo_url: 'https://github.com/meko568/memory-game',
+    demo_url: 'https://meko568.github.io/memory-game/main',
+    technologies: ['HTML', 'CSS', 'JavaScript'],
+    updated_at: '2025-04-05',
+  },
+  {
+    name: 'E-commerce Product Page',
+    description: 'E-commerce product showcase page with product gallery, add to cart functionality, and responsive design.',
+    repo_url: 'https://github.com/meko568/the-product',
+    demo_url: 'https://meko568.github.io/the-product/main',
+    technologies: ['JavaScript', 'CSS', 'Responsive Design'],
+    updated_at: '2025-02-08',
+  },
+  {
+    name: 'Countries Info',
+    description: 'Country information application displaying country details, flags, and statistics in an interactive way.',
+    repo_url: 'https://github.com/meko568/countries',
+    demo_url: 'https://meko568.github.io/countries/main',
+    technologies: ['CSS', 'JavaScript', 'REST Countries API'],
+    updated_at: '2025-02-05',
+  },
+  {
+    name: 'Credit Card Form',
+    description: 'Credit card form with real-time validation, card type detection, and secure input formatting.',
+    repo_url: 'https://github.com/meko568/credit',
+    demo_url: 'https://meko568.github.io/credit/main',
+    technologies: ['JavaScript', 'Form Validation', 'UX/UI'],
+    updated_at: '2025-02-04',
+  },
+  {
+    name: 'Chart Library',
+    description: 'Interactive chart component with responsive design and add to cart functionality.',
+    repo_url: 'https://github.com/meko568/chart',
+    demo_url: 'https://meko568.github.io/chart/main',
+    technologies: ['JavaScript', 'Responsive Design', 'E-commerce'],
+    updated_at: '2025-02-01',
+  },
+  {
+    name: 'CSS Grid Layout',
+    description: 'Showcase of modern web design techniques using CSS Grid, featuring responsive layouts and creative solutions.',
+    repo_url: 'https://github.com/meko568/grid-project',
+    demo_url: 'https://meko568.github.io/grid-project/a grid',
+    technologies: ['CSS Grid', 'Responsive Design', 'Modern Layouts'],
+    updated_at: '2024-12-08',
+  },
+];
 
 export default function Home() {
   return (
@@ -40,40 +146,77 @@ export default function Home() {
       </section>
 
       {/* Projects Section */}
-      <section id="projects" className="section bg-light">
-        <div className="container">
-          <h2 className="section-title">My Projects</h2>
-          <GithubRepos username="meko568" />
-        </div>
-      </section>
-
-      {/* Contact Section */}
-      <section id="contact" className="section">
-        <div className="container">
-          <h2 className="section-title">Get In Touch</h2>
-          <div className={styles.contactContent}>
-            <p className={styles.contactText}>I'm currently looking for new opportunities. Whether you have a question or just want to say hi, I'll get back to you as soon as possible!</p>
-            <button 
-              onClick={(e) => {
-                e.preventDefault();
-                console.log('Button clicked');
-                try {
-                  window.open('mailto:mohammedelbardan82@gmail.com?subject=Let\'s Connect - From Your Portfolio', '_blank');
-                } catch (error) {
-                  console.error('Error opening email client:', error);
-                  // Fallback to a new tab with a contact form or direct email link
-                  window.open('https://mail.google.com/mail/?view=cm&fs=1&to=mohammedelbardan82@gmail.com&su=Let\'s Connect - From Your Portfolio', '_blank');
-                }
-              }}
-              className={styles.contactBtn}
-              type="button"
-            >
-              Say Hello
-            </button>
+      <section id="projects" className={`section ${styles.bgLight}`}>
+        <div className={styles.container}>
+          <h2 className={styles.sectionTitle}>My Projects</h2>
+          <div className={styles.projectsGrid}>
+            {projects.map((project, index) => (
+              <div key={index} className={styles.projectCard}>
+                <div className={styles.projectContent}>
+                  <h3 className={styles.projectTitle}>{project.name}</h3>
+                  <p className={styles.projectDescription}>{project.description}</p>
+                  <div className={styles.techStack}>
+                    {project.technologies.map((tech, i) => (
+                      <span key={i} className={styles.techTag}>
+                        {tech}
+                      </span>
+                    ))}
+                  </div>
+                  <div className={styles.projectLinks}>
+                    <a 
+                      href={project.demo_url}
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className={`${styles.projectLink} ${styles.primaryLink}`}
+                    >
+                      Live Demo
+                    </a>
+                    <a 
+                      href={project.repo_url} 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className={`${styles.projectLink} ${styles.secondaryLink}`}
+                    >
+                      View Code
+                    </a>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
+      {/* Contact Section */}
+      <section id="contact" className={styles.section}>
+        <div className={styles.container}>
+          <h2 className={styles.sectionTitle}>Get In Touch</h2>
+          <div className={styles.contactContent}>
+            <p className={styles.contactText}>
+              I'm currently looking for new opportunities. Whether you have a question or just want to say hi, 
+              I'll get back to you as soon as possible!
+            </p>
+            <a 
+              href="mailto:mohammedelbardan82@gmail.com?subject=Let's Connect - From Your Portfolio"
+              className={styles.contactBtn}
+              onClick={(e) => {
+                try {
+                  // Let the default mailto: behavior work first
+                  return true;
+                } catch (error) {
+                  console.error('Error with mailto link:', error);
+                  // Fallback to window.open if there's an error
+                  e.preventDefault();
+                  window.open('mailto:mohammedelbardan82@gmail.com?subject=Let\'s Connect - From Your Portfolio');
+                  return false;
+                }
+              }}
+            >
+              Say Hello
+            </a>
+          </div>
+        </div>
+      </section>
       <style jsx>{`
         /* Hero Section */
         .hero {
