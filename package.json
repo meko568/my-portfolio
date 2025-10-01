@@ -1,29 +1,30 @@
 {
-  "name": "portfolio",
+  "name": "my-portfolio",
   "version": "0.1.0",
   "private": true,
   "homepage": "https://meko568.github.io/my-portfolio",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "postbuild": "echo 'meko568.github.io/my-portfolio' > out/CNAME && type nul > out/.nojekyll",
-    "start": "next start",
-    "lint": "eslint .",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d out -t"
+  "dev": "next dev",
+  "build": "next build",
+  "postbuild": "echo > out/.nojekyll", 
+  "start": "next start",
+  "lint": "eslint .",
+  "predeploy": "npm run build",
+  "deploy": "gh-pages -d out -f"
   },
   "dependencies": {
-    "next": "15.5.4",
+    "next": "15.5.3",
     "react": "19.1.0",
     "react-dom": "19.1.0"
   },
   "devDependencies": {
-    "@types/node": "^20.0.0",
-    "@types/react": "^19.0.0",
-    "@types/react-dom": "^19.0.0",
-    "eslint": "^8.0.0",
-    "eslint-config-next": "^15.5.4",
+    "@eslint/eslintrc": "^3",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "15.5.3",
     "gh-pages": "^6.3.0",
-    "typescript": "^5.0.0"
+    "typescript": "^5"
   }
 }

@@ -1,15 +1,16 @@
 /** @type {import('next').NextConfig} */
 const isProd = process.env.NODE_ENV === 'production';
+const repo = 'my-portfolio'; // your repo name
 
 const nextConfig = {
-  output: 'export',
-  distDir: 'out',
-  basePath: isProd ? '/my-portfolio' : '',
-  assetPrefix: isProd ? '/my-portfolio/' : '',
+  output: 'export',        // enable static export
+  distDir: 'out',          // export folder
+  basePath: isProd ? `/${repo}` : '',    // required for GitHub Pages
+  assetPrefix: isProd ? `/${repo}/` : '',// required for assets (CSS/JS)
   images: {
-    unoptimized: true, // required for static export
+    unoptimized: true, // GitHub Pages doesn’t support next/image optimization
   },
-  trailingSlash: true,
+  trailingSlash: true, // helps prevent broken routes
 };
 
 module.exports = nextConfig;
