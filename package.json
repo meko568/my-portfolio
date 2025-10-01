@@ -6,11 +6,11 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "postbuild": "touch out/.nojekyll",
+    "postbuild": "echo 'meko568.github.io/my-portfolio' > out/CNAME && type nul > out/.nojekyll",
     "start": "next start",
     "lint": "eslint .",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d out -f"
+    "deploy": "gh-pages -d out -t"
   },
   "dependencies": {
     "next": "15.5.4",
