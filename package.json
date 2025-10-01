@@ -5,7 +5,7 @@
   "homepage": "https://meko568.github.io/my-portfolio",
   "scripts": {
     "dev": "next dev",
-    "build": "next build && next export",
+    "build": "next build",
     "postbuild": "touch out/.nojekyll && echo 'meko568.github.io/my-portfolio' > out/CNAME",
     "start": "next start",
     "lint": "eslint .",
