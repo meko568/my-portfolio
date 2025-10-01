@@ -1,14 +1,14 @@
 /** @type {import('next').NextConfig} */
 const isProd = process.env.NODE_ENV === 'production';
+const repo = 'my-portfolio';
 
 const nextConfig = {
   output: 'export',
-  basePath: isProd ? '/my-portfolio' : '',
-  assetPrefix: isProd ? 'https://meko568.github.io/my-portfolio/' : '',
+  basePath: isProd ? `/${repo}` : '',
+  assetPrefix: isProd ? `/${repo}/` : '',
   images: {
     unoptimized: true,
   },
-  // Ensure links work with GitHub Pages
   trailingSlash: true,
 };
 
