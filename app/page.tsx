@@ -1,4 +1,5 @@
 'use client'
+import { useEffect, useState, useRef } from 'react';
 import styles from './page.module.css';
 
 const projects = [
@@ -109,36 +110,223 @@ const projects = [
 ];
 
 export default function Home() {
+  const [visibleSections, setVisibleSections] = useState<Set<string>>(new Set());
+  const observerRef = useRef<IntersectionObserver | null>(null);
+
+  useEffect(() => {
+    // Wait for DOM to be fully loaded
+    const initObserver = () => {
+      try {
+        if (observerRef.current) {
+          observerRef.current.disconnect();
+        }
+        
+        observerRef.current = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              const id = entry.target.id;
+              if (entry.isIntersecting) {
+                setVisibleSections((prev) => new Set(prev).add(id));
+                
+                if (id.startsWith('project-')) {
+                  console.log('Project detected:', id);
+                  const allProjects = document.querySelectorAll('[id^="project-"]');
+                  console.log('Total projects found:', allProjects.length);
+                  
+                  allProjects.forEach(project => {
+                    console.log('Removing styles from:', project.id);
+                    const projectElement = project as HTMLElement;
+                    // Remove all inline styles from other projects
+                    projectElement.style.opacity = '0';
+                    projectElement.style.visibility = 'visible';
+                    projectElement.style.display = 'block';
+                    projectElement.style.transform = 'translateY(20px) scale(0.98)';
+                    projectElement.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.1)';
+                    projectElement.style.border = '2px solid #e5e7eb';
+                    projectElement.style.background = 'white';
+                    projectElement.style.color = '#1f2937';
+                    projectElement.style.fontSize = '1rem';
+                    projectElement.style.zIndex = '1';
+                    projectElement.style.position = 'relative';
+                    projectElement.classList.remove('animate');
+                    
+                    // Reset language tags to prevent dancing
+                    const childElements = projectElement.querySelectorAll('*');
+                    childElements.forEach(child => {
+                      const childElement = child as HTMLElement;
+                      if (childElement.classList.contains('techTag') || childElement.classList.contains('tag') || childElement.tagName === 'SPAN') {
+                        childElement.style.transition = 'none';
+                        childElement.style.animation = 'none';
+                        childElement.style.transform = 'none';
+                        childElement.style.transformStyle = 'flat';
+                      }
+                    });
+                  });
+                  
+                  console.log('Adding styles to:', id);
+                  const targetElement = entry.target as HTMLElement;
+                  
+                  // Apply all animation properties via inline styles
+                  targetElement.style.opacity = '1';
+                  targetElement.style.visibility = 'visible';
+                  targetElement.style.display = 'block';
+                  targetElement.style.transform = 'translateY(0) scale(1.05)';
+                  targetElement.style.boxShadow = '0 10px 40px rgba(99, 102, 241, 0.3)';
+                  targetElement.style.border = '3px solid #6366f1';
+                  targetElement.style.background = 'linear-gradient(145deg, #ffffff, #f8fafc)';
+                  targetElement.style.color = '#1f2937';
+                  targetElement.style.fontSize = '1.1rem';
+                  targetElement.style.zIndex = '10';
+                  targetElement.style.position = 'relative';
+                  targetElement.style.transition = 'all 1.5s cubic-bezier(0.4, 0, 0.2, 1)';
+                  
+                  // Also force child elements and prevent dancing animations
+                  const childElements = targetElement.querySelectorAll('*');
+                  childElements.forEach(child => {
+                    const childElement = child as HTMLElement;
+                    childElement.style.opacity = '1';
+                    childElement.style.visibility = 'visible';
+                    
+                    // Add dancing animations to language tags
+                    if (childElement.classList.contains('techTag') || childElement.classList.contains('tag') || childElement.tagName === 'SPAN') {
+                      childElement.style.transition = 'all 0.3s ease';
+                      childElement.style.animation = 'bounce 1s infinite, pulse 2s infinite';
+                      childElement.style.transform = 'translateY(0)';
+                      childElement.style.transformStyle = 'preserve-3d';
+                      childElement.style.animationDelay = Math.random() * 2 + 's';
+                    }
+                  });
+                  
+                  // Add dancing animations to language/tech tags
+                  const techTags = targetElement.querySelectorAll('.techTag, .tag, span[class*="tech"], span[class*="tag"]');
+                  techTags.forEach((tag, index) => {
+                    const tagElement = tag as HTMLElement;
+                    tagElement.style.transition = 'all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+                    tagElement.style.animation = `bounce 0.8s infinite alternate, wave ${1 + index * 0.1}s infinite`;
+                    tagElement.style.transform = 'translateY(0) scale(1)';
+                    tagElement.style.transformStyle = 'preserve-3d';
+                    tagElement.style.animationDelay = `${index * 0.2}s`;
+                    tagElement.style.willChange = 'transform';
+                  });
+                  
+                  // Verify the class was added
+                  setTimeout(() => {
+                    console.log('Current classes:', entry.target.className);
+                    console.log('Inline styles:', targetElement.style.cssText);
+                    console.log('Project is now visible with red animation!');
+                  }, 100);
+                }
+              }
+            });
+          },
+          { threshold: 0.1 }
+        );
+
+        // Observe project cards
+        const projectCards = document.querySelectorAll('[id^="project-"]');
+        console.log('Found project cards:', projectCards.length);
+        projectCards.forEach((card) => {
+          if (observerRef.current && card) {
+            observerRef.current.observe(card);
+          }
+        });
+
+        // Observe sections
+        const sections = document.querySelectorAll('.observe-section');
+        console.log('Found sections:', sections.length);
+        sections.forEach((section) => {
+          if (observerRef.current && section) {
+            observerRef.current.observe(section);
+          }
+        });
+      } catch (error) {
+        console.error('Intersection Observer setup failed:', error);
+      }
+    };
+
+    // Delay initialization to avoid hot module replacement conflicts
+    const timeoutId = setTimeout(initObserver, 500);
+
+    // Combined scroll handler for parallax and header effects
+    const handleScroll = () => {
+      const scrolled = window.pageYOffset;
+      
+      // Parallax effect
+      const parallaxElements = document.querySelectorAll('.parallax-slow, .parallax-medium, .parallax-fast') as NodeListOf<HTMLElement>;
+      parallaxElements.forEach((el) => {
+        const speed = el.classList.contains('parallax-slow') ? 0.5 : 
+                      el.classList.contains('parallax-medium') ? 0.3 : 0.1;
+        const yPos = -(scrolled * speed);
+        el.style.transform = `translateY(${yPos}px)`;
+      });
+      
+      // Header scroll effect
+      const header = document.querySelector('.site-header');
+      if (header) {
+        if (window.scrollY > 50) {
+          header.classList.add('scrolled');
+        } else {
+          header.classList.remove('scrolled');
+        }
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      clearTimeout(timeoutId);
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+        observerRef.current = null;
+      }
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
   return (
     <>
       {/* Hero Section */}
-      <section className="hero">
+      <section className="hero" style={{ position: 'relative', overflow: 'hidden' }}>
         <div className="container">
           <div className={styles.heroContent}>
-            <h1 className={styles.heroTitle}>Hi, I'm <span className="gradient-text">Mohammed Elbardan</span></h1>
-            <h2 className={styles.heroSubtitle}>Frontend Developer</h2>
-            <p className={styles.heroLead}>I build exceptional digital experiences with modern web technologies.</p>
-            <div className="cta-buttons">
-              <a href="#projects" className="btn">View My Work</a>
-              <a href="#contact" className="btn btn-outline">Contact Me</a>
+            <h1 className={`${styles.heroTitle} animate-fade-in-up`}>
+              Hi, I'm <span className="gradient-text">Mohammed Elbardan</span>
+            </h1>
+            <h2 className={`${styles.heroSubtitle} animate-slide-in-left animate-stagger-1`}>Frontend Developer</h2>
+            <p className={`${styles.heroLead} typewriter`}>
+              I build exceptional digital experiences with modern web technologies.
+            </p>
+            <div className={styles.ctaButtons}>
+              <a href="#projects" className="btn btn-primary magnetic-btn hover-lift">
+                View My Work
+              </a>
+              <a href="#contact" className="btn btn-outline magnetic-btn hover-lift">
+                Contact Me
+              </a>
             </div>
           </div>
         </div>
+        
       </section>
 
       {/* About Section */}
-      <section id="about" className="section">
+      <section id="about" className={`section observe-section ${visibleSections.has('about') ? 'observe-visible' : 'observe-hidden'}`}>
         <div className="container">
-          <h2 className="section-title">About Me</h2>
+          <h2 className={`section-title ${visibleSections.has('about') ? 'animate-rotate-in' : ''}`}>About Me</h2>
           <div className="about-content">
             <div className="about-text">
-              <p>Hello! I'm a passionate frontend developer with a love for creating beautiful, responsive, and user-friendly web applications. With expertise in modern JavaScript frameworks and a keen eye for design, I bring ideas to life in the browser.</p>
-              <p>When I'm not coding, you can find me exploring new technologies, contributing to open source, or enjoying the great outdoors.</p>
-              <div className={styles.skillsTags}>
-                <span>JavaScript</span>
-                <span>TypeScript</span>
-                <span>React</span>
-                <span>Git</span>
+              <p className={`${visibleSections.has('about') ? 'slide-fade' : ''} ${visibleSections.has('about') ? 'visible' : ''}`}>
+                Hello! I'm a passionate frontend developer with a love for creating beautiful, responsive, and user-friendly web applications. With expertise in modern JavaScript frameworks and a keen eye for design, I bring ideas to life in the browser.
+              </p>
+              <p className={`${visibleSections.has('about') ? 'slide-fade' : ''} ${visibleSections.has('about') ? 'visible' : ''}`}>
+                When I'm not coding, you can find me exploring new technologies, contributing to open source, or enjoying the great outdoors.
+              </p>
+              <div className={`${styles.skillsTags} ${visibleSections.has('about') ? 'animate-scale-in' : ''}`}>
+                <span className="stagger-item hover-lift">JavaScript</span>
+                <span className="stagger-item hover-lift">TypeScript</span>
+                <span className="stagger-item hover-lift">React</span>
+                <span className="stagger-item hover-lift">Git</span>
+                <span className="stagger-item hover-lift">CSS</span>
               </div>
             </div>
           </div>
@@ -146,18 +334,22 @@ export default function Home() {
       </section>
 
       {/* Projects Section */}
-      <section id="projects" className={`section ${styles.bgLight}`}>
+      <section id="projects" className={`section observe-section ${styles.bgLight} ${visibleSections.has('projects') ? 'observe-visible' : 'observe-hidden'}`}>
         <div className={styles.container}>
-          <h2 className={styles.sectionTitle}>My Projects</h2>
-          <div className={styles.projectsGrid}>
+          <h2 className={`${styles.sectionTitle} ${visibleSections.has('projects') ? 'animate-slide-in-left' : ''}`}>My Projects</h2>
+          <div className={`${styles.projectsGrid} ${visibleSections.has('projects') ? 'animate-parallax' : ''}`}>
             {projects.map((project, index) => (
-              <div key={index} className={styles.projectCard}>
+              <div 
+                key={index} 
+                className={`${styles.projectCard} hover-lift`}
+                id={`project-${index}`}
+              >
                 <div className={styles.projectContent}>
-                  <h3 className={styles.projectTitle}>{project.name}</h3>
+                  <h3 className={`${styles.projectTitle} reveal`}>{project.name}</h3>
                   <p className={styles.projectDescription}>{project.description}</p>
                   <div className={styles.techStack}>
                     {project.technologies.map((tech, i) => (
-                      <span key={i} className={styles.techTag}>
+                      <span key={i} className={`${styles.techTag} stagger-item`} style={{ animationDelay: `${i * 0.1}s` }}>
                         {tech}
                       </span>
                     ))}
@@ -167,7 +359,7 @@ export default function Home() {
                       href={project.demo_url}
                       target="_blank" 
                       rel="noopener noreferrer" 
-                      className={`${styles.projectLink} ${styles.primaryLink}`}
+                      className={`${styles.projectLink} ${styles.primaryLink} magnetic-btn`}
                     >
                       Live Demo
                     </a>
@@ -188,17 +380,17 @@ export default function Home() {
       </section>
 
       {/* Contact Section */}
-      <section id="contact" className={styles.section}>
+      <section id="contact" className={`section observe-section ${visibleSections.has('contact') ? 'observe-visible' : 'observe-hidden'}`}>
         <div className={styles.container}>
-          <h2 className={styles.sectionTitle}>Get In Touch</h2>
+          <h2 className={`${styles.sectionTitle} ${visibleSections.has('contact') ? 'animate-slide-in-right' : ''}`}>Get In Touch</h2>
           <div className={styles.contactContent}>
-            <p className={styles.contactText}>
+            <p className={`${styles.contactText} ${visibleSections.has('contact') ? 'slide-fade' : ''} ${visibleSections.has('contact') ? 'visible' : ''}`}>
               I'm currently looking for new opportunities. Whether you have a question or just want to say hi, 
               I'll get back to you as soon as possible!
             </p>
             <a 
               href="mailto:mohammedelbardan82@gmail.com?subject=Let's Connect - From Your Portfolio"
-              className={styles.contactBtn}
+              className={`${styles.contactBtn} ${visibleSections.has('contact') ? 'animate-scale-in' : ''} magnetic-btn hover-lift glow-pulse`}
               onClick={(e) => {
                 try {
                   // Let the default mailto: behavior work first
