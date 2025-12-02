@@ -134,8 +134,11 @@ export default function Home() {
                   console.log('Total projects found:', allProjects.length);
                   
                   allProjects.forEach(project => {
+                    if (!project) return;
                     console.log('Removing styles from:', project.id);
                     const projectElement = project as HTMLElement;
+                    if (!projectElement) return;
+                    
                     // Remove all inline styles from other projects
                     projectElement.style.opacity = '0';
                     projectElement.style.visibility = 'visible';
@@ -153,8 +156,9 @@ export default function Home() {
                     // Reset language tags to prevent dancing
                     const childElements = projectElement.querySelectorAll('*');
                     childElements.forEach(child => {
+                      if (!child) return;
                       const childElement = child as HTMLElement;
-                      if (childElement.classList.contains('techTag') || childElement.classList.contains('tag') || childElement.tagName === 'SPAN') {
+                      if (childElement && (childElement.classList.contains('techTag') || childElement.classList.contains('tag') || childElement.tagName === 'SPAN')) {
                         childElement.style.transition = 'none';
                         childElement.style.animation = 'none';
                         childElement.style.transform = 'none';
@@ -165,6 +169,7 @@ export default function Home() {
                   
                   console.log('Adding styles to:', id);
                   const targetElement = entry.target as HTMLElement;
+                  if (!targetElement) return;
                   
                   // Apply all animation properties via inline styles
                   targetElement.style.opacity = '1';
@@ -183,7 +188,10 @@ export default function Home() {
                   // Also force child elements and prevent dancing animations
                   const childElements = targetElement.querySelectorAll('*');
                   childElements.forEach(child => {
+                    if (!child) return;
                     const childElement = child as HTMLElement;
+                    if (!childElement) return;
+                    
                     childElement.style.opacity = '1';
                     childElement.style.visibility = 'visible';
                     
@@ -200,7 +208,10 @@ export default function Home() {
                   // Add dancing animations to language/tech tags
                   const techTags = targetElement.querySelectorAll('.techTag, .tag, span[class*="tech"], span[class*="tag"]');
                   techTags.forEach((tag, index) => {
+                    if (!tag) return;
                     const tagElement = tag as HTMLElement;
+                    if (!tagElement) return;
+                    
                     tagElement.style.transition = 'all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
                     tagElement.style.animation = `bounce 0.8s infinite alternate, wave ${1 + index * 0.1}s infinite`;
                     tagElement.style.transform = 'translateY(0) scale(1)';
@@ -276,10 +287,18 @@ export default function Home() {
     return () => {
       clearTimeout(timeoutId);
       if (observerRef.current) {
-        observerRef.current.disconnect();
+        try {
+          observerRef.current.disconnect();
+        } catch (error) {
+          console.warn('Error disconnecting observer:', error);
+        }
         observerRef.current = null;
       }
-      window.removeEventListener('scroll', handleScroll);
+      try {
+        window.removeEventListener('scroll', handleScroll);
+      } catch (error) {
+        console.warn('Error removing scroll listener:', error);
+      }
     };
   }, []);
 
