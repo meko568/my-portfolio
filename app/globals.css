@@ -1305,6 +1305,16 @@ html {
   color: white;
 }
 
+/* Dark mode mobile navigation */
+.dark-mode .mobile-nav-link {
+  color: var(--text-color);
+}
+
+.dark-mode .mobile-nav-link:hover {
+  background-color: var(--primary-color);
+  color: white;
+}
+
 /* Enhanced Footer */
 .site-footer {
   position: relative;
