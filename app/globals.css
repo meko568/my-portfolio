@@ -1542,3 +1542,22 @@ html {
     transform: scale(1.1);
   }
 }
+
+/* Project card animation styles */
+[class*="projectCard"].animate {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
+  transform: translateY(0) scale(1.02) !important;
+  box-shadow: 0 8px 32px rgba(99, 102, 241, 0.25) !important;
+  border: 2px solid #6366f1 !important;
+  background: linear-gradient(145deg, #ffffff, #f8fafc) !important;
+  z-index: 5 !important;
+  position: relative !important;
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+[class*="projectCard"].animate * {
+  opacity: 1 !important;
+  visibility: visible !important;
+}

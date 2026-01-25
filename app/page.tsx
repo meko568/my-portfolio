@@ -127,122 +127,13 @@ export default function Home() {
               const id = entry.target.id;
               if (entry.isIntersecting) {
                 setVisibleSections((prev) => new Set(prev).add(id));
-                
-                if (id.startsWith('project-')) {
-                  console.log('Project detected:', id);
-                  const allProjects = document.querySelectorAll('[id^="project-"]');
-                  console.log('Total projects found:', allProjects.length);
-                  
-                  allProjects.forEach(project => {
-                    if (!project) return;
-                    console.log('Removing styles from:', project.id);
-                    const projectElement = project as HTMLElement;
-                    if (!projectElement) return;
-                    
-                    // Remove all inline styles from other projects
-                    projectElement.style.opacity = '0';
-                    projectElement.style.visibility = 'visible';
-                    projectElement.style.display = 'block';
-                    projectElement.style.transform = 'translateY(20px) scale(0.98)';
-                    projectElement.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.1)';
-                    projectElement.style.border = '2px solid #e5e7eb';
-                    projectElement.style.background = 'white';
-                    projectElement.style.color = '#1f2937';
-                    projectElement.style.fontSize = '1rem';
-                    projectElement.style.zIndex = '1';
-                    projectElement.style.position = 'relative';
-                    projectElement.classList.remove('animate');
-                    
-                    // Reset language tags to prevent dancing
-                    const childElements = projectElement.querySelectorAll('*');
-                    childElements.forEach(child => {
-                      if (!child) return;
-                      const childElement = child as HTMLElement;
-                      if (childElement && (childElement.classList.contains('techTag') || childElement.classList.contains('tag') || childElement.tagName === 'SPAN')) {
-                        childElement.style.transition = 'none';
-                        childElement.style.animation = 'none';
-                        childElement.style.transform = 'none';
-                        childElement.style.transformStyle = 'flat';
-                      }
-                    });
-                  });
-                  
-                  console.log('Adding styles to:', id);
-                  const targetElement = entry.target as HTMLElement;
-                  if (!targetElement) return;
-                  
-                  // Apply all animation properties via inline styles
-                  targetElement.style.opacity = '1';
-                  targetElement.style.visibility = 'visible';
-                  targetElement.style.display = 'block';
-                  targetElement.style.transform = 'translateY(0) scale(1.05)';
-                  targetElement.style.boxShadow = '0 10px 40px rgba(99, 102, 241, 0.3)';
-                  targetElement.style.border = '3px solid #6366f1';
-                  targetElement.style.background = 'linear-gradient(145deg, #ffffff, #f8fafc)';
-                  targetElement.style.color = '#1f2937';
-                  targetElement.style.fontSize = '1.1rem';
-                  targetElement.style.zIndex = '10';
-                  targetElement.style.position = 'relative';
-                  targetElement.style.transition = 'all 1.5s cubic-bezier(0.4, 0, 0.2, 1)';
-                  
-                  // Also force child elements and prevent dancing animations
-                  const childElements = targetElement.querySelectorAll('*');
-                  childElements.forEach(child => {
-                    if (!child) return;
-                    const childElement = child as HTMLElement;
-                    if (!childElement) return;
-                    
-                    childElement.style.opacity = '1';
-                    childElement.style.visibility = 'visible';
-                    
-                    // Add dancing animations to language tags
-                    if (childElement.classList.contains('techTag') || childElement.classList.contains('tag') || childElement.tagName === 'SPAN') {
-                      childElement.style.transition = 'all 0.3s ease';
-                      childElement.style.animation = 'bounce 1s infinite, pulse 2s infinite';
-                      childElement.style.transform = 'translateY(0)';
-                      childElement.style.transformStyle = 'preserve-3d';
-                      childElement.style.animationDelay = Math.random() * 2 + 's';
-                    }
-                  });
-                  
-                  // Add dancing animations to language/tech tags
-                  const techTags = targetElement.querySelectorAll('.techTag, .tag, span[class*="tech"], span[class*="tag"]');
-                  techTags.forEach((tag, index) => {
-                    if (!tag) return;
-                    const tagElement = tag as HTMLElement;
-                    if (!tagElement) return;
-                    
-                    tagElement.style.transition = 'all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
-                    tagElement.style.animation = `bounce 0.8s infinite alternate, wave ${1 + index * 0.1}s infinite`;
-                    tagElement.style.transform = 'translateY(0) scale(1)';
-                    tagElement.style.transformStyle = 'preserve-3d';
-                    tagElement.style.animationDelay = `${index * 0.2}s`;
-                    tagElement.style.willChange = 'transform';
-                  });
-                  
-                  // Verify the class was added
-                  setTimeout(() => {
-                    console.log('Current classes:', entry.target.className);
-                    console.log('Inline styles:', targetElement.style.cssText);
-                    console.log('Project is now visible with red animation!');
-                  }, 100);
-                }
               }
             });
           },
           { threshold: 0.1 }
         );
 
-        // Observe project cards
-        const projectCards = document.querySelectorAll('[id^="project-"]');
-        console.log('Found project cards:', projectCards.length);
-        projectCards.forEach((card) => {
-          if (observerRef.current && card) {
-            observerRef.current.observe(card);
-          }
-        });
-
-        // Observe sections
+        // Observe sections only (no project animation)
         const sections = document.querySelectorAll('.observe-section');
         console.log('Found sections:', sections.length);
         sections.forEach((section) => {
@@ -353,7 +244,7 @@ export default function Home() {
       </section>
 
       {/* Projects Section */}
-      <section id="projects" className={`section observe-section ${styles.bgLight} ${visibleSections.has('projects') ? 'observe-visible' : 'observe-hidden'}`}>
+      <section id="projects" className={`section observe-section ${styles.bgLight} ${visibleSections.has('projects') ? 'observe-visible' : ''}`}>
         <div className={styles.container}>
           <h2 className={`${styles.sectionTitle} ${visibleSections.has('projects') ? 'animate-slide-in-left' : ''}`}>My Projects</h2>
           <div className={`${styles.projectsGrid} ${visibleSections.has('projects') ? 'animate-parallax' : ''}`}>
