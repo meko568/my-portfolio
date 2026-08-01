@@ -35,18 +35,20 @@ export default function SiteHeader({ navLinks }: { navLinks: NavLink[] }) {
           ))}
         </ul>
 
-        <button
-          className={`mobile-menu-button ${mobileOpen ? 'open' : ''}`}
-          onClick={() => setMobileOpen((v) => !v)}
-          aria-label="Toggle menu"
-          aria-expanded={mobileOpen}
-        >
-          <span className="menu-icon" />
-          <span className="menu-icon" />
-          <span className="menu-icon" />
-        </button>
+        <div className="mobile-nav-wrapper">
+          <button
+            className={`mobile-menu-button ${mobileOpen ? 'open' : ''}`}
+            onClick={() => setMobileOpen((v) => !v)}
+            aria-label="Toggle menu"
+            aria-expanded={mobileOpen}
+          >
+            <span className="menu-icon" />
+            <span className="menu-icon" />
+            <span className="menu-icon" />
+          </button>
 
-        <MobileMenu navLinks={navLinks} isOpen={mobileOpen} onClose={() => setMobileOpen(false)} />
+          <MobileMenu navLinks={navLinks} isOpen={mobileOpen} onClose={() => setMobileOpen(false)} />
+        </div>
       </div>
     </header>
   );

@@ -1,9 +1,23 @@
 /* ---- Hero ---- */
 .hero {
+  position: relative;
+  overflow: hidden;
   padding: 5.5rem 0 4.5rem;
   min-height: 90vh;
   display: flex;
   align-items: center;
+}
+
+.heroGlow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    380px circle at var(--mx, 50%) var(--my, 30%),
+    rgba(227, 168, 87, 0.10),
+    transparent 70%
+  );
+  transition: background 0.1s ease-out;
 }
 
 .heroGrid {
@@ -72,11 +86,7 @@
 .section {
   padding: 5rem 0;
   border-top: 1px solid var(--line);
-  opacity: 0;
-  transform: translateY(16px);
-  transition: opacity 0.5s ease, transform 0.5s ease;
 }
-.sectionVisible { opacity: 1; transform: translateY(0); }
 
 .sectionHead {
   display: flex;

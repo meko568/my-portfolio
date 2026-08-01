@@ -1,16 +1,20 @@
 /** @type {import('next').NextConfig} */
-const isProd = process.env.NODE_ENV === 'production';
-const repo = 'my-portfolio'; // your repo name
+// basePath/assetPrefix only needed if you deploy to GitHub Pages under
+// https://<user>.github.io/my-portfolio/. Leave GH_PAGES unset for Vercel
+// or a custom domain at the root - otherwise CSS/JS 404 and the page
+// renders unstyled (this was the "sidebar always visible" bug).
+const forGithubPages = process.env.GH_PAGES === 'true';
+const repo = 'my-portfolio';
 
 const nextConfig = {
-  output: 'export',        // enable static export
-  distDir: 'out',          // export folder
-  basePath: isProd ? `/${repo}` : '',    // required for GitHub Pages
-  assetPrefix: isProd ? `/${repo}/` : '',// required for assets (CSS/JS)
+  output: 'export',
+  distDir: 'out',
+  basePath: forGithubPages ? `/${repo}` : '',
+  assetPrefix: forGithubPages ? `/${repo}/` : '',
   images: {
-    unoptimized: true, // GitHub Pages doesn’t support next/image optimization
+    unoptimized: true,
   },
-  trailingSlash: true, // helps prevent broken routes
+  trailingSlash: true,
 };
 
 module.exports = nextConfig;

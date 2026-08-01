@@ -96,6 +96,33 @@ button, input, textarea { font-family: inherit; }
 
 ::selection { background: var(--accent); color: #14100a; }
 
+/* ambient scan line sweeping the blueprint grid, subtle, non-distracting */
+.scan-line {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 140px;
+  pointer-events: none;
+  z-index: 1;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgba(227, 168, 87, 0.05) 45%,
+    rgba(227, 168, 87, 0.09) 50%,
+    rgba(227, 168, 87, 0.05) 55%,
+    transparent
+  );
+  animation: scan-sweep 9s linear infinite;
+}
+@keyframes scan-sweep {
+  0% { transform: translateY(-140px); }
+  100% { transform: translateY(100vh); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .scan-line { display: none; }
+}
+
 /* ---- Header ---- */
 .site-header {
   position: sticky;
@@ -142,8 +169,10 @@ button, input, textarea { font-family: inherit; }
 }
 .nav-link:hover { color: var(--accent); border-color: var(--accent); }
 
+.mobile-nav-wrapper { display: none; }
+
 .mobile-menu-button {
-  display: none;
+  display: flex;
   flex-direction: column;
   gap: 5px;
   background: none;
@@ -163,7 +192,7 @@ button, input, textarea { font-family: inherit; }
 
 @media (max-width: 768px) {
   .nav-links { display: none; }
-  .mobile-menu-button { display: flex; }
+  .mobile-nav-wrapper { display: block; }
 }
 
 /* ---- Footer ---- */

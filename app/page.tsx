@@ -1,6 +1,49 @@
 'use client';
-import { useEffect, useRef, useState } from 'react';
+import { motion, Variants, useMotionValue, useSpring } from 'framer-motion';
+import { useRef, useState, MouseEvent } from 'react';
 import styles from './page.module.css';
+
+function MagneticButton({
+  href,
+  className,
+  children,
+}: {
+  href: string;
+  className: string;
+  children: React.ReactNode;
+}) {
+  const ref = useRef<HTMLAnchorElement>(null);
+  const x = useSpring(useMotionValue(0), { stiffness: 200, damping: 18 });
+  const y = useSpring(useMotionValue(0), { stiffness: 200, damping: 18 });
+
+  const handleMove = (e: MouseEvent<HTMLAnchorElement>) => {
+    const rect = ref.current?.getBoundingClientRect();
+    if (!rect) return;
+    const relX = e.clientX - (rect.left + rect.width / 2);
+    const relY = e.clientY - (rect.top + rect.height / 2);
+    x.set(relX * 0.35);
+    y.set(relY * 0.35);
+  };
+
+  const handleLeave = () => {
+    x.set(0);
+    y.set(0);
+  };
+
+  return (
+    <motion.a
+      ref={ref}
+      href={href}
+      className={className}
+      style={{ x, y }}
+      onMouseMove={handleMove}
+      onMouseLeave={handleLeave}
+      whileTap={{ scale: 0.96 }}
+    >
+      {children}
+    </motion.a>
+  );
+}
 
 type Project = {
   name: string;
@@ -93,87 +136,213 @@ const skills = {
   Tooling: ['Git', 'Vercel', 'Linux'],
 };
 
+const stackLayers = [
+  { tag: '01 \u2014 INTERFACE', name: 'Frontend', tech: 'Next.js / TS / Vue' },
+  { tag: '02 \u2014 SERVICE', name: 'Backend', tech: 'Laravel / PHP' },
+  { tag: '03 \u2014 DATA', name: 'Storage', tech: 'MySQL' },
+  { tag: '04 \u2014 DEVICE', name: 'Mobile', tech: 'Flutter / Dart' },
+];
+
+const EASE = [0.22, 1, 0.36, 1] as const;
+
+const fadeUp: Variants = {
+  hidden: { opacity: 0, y: 24 },
+  visible: (i: number = 0) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, delay: i * 0.08, ease: EASE },
+  }),
+};
+
+const sectionVariant: Variants = {
+  hidden: { opacity: 0, y: 32 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: EASE } },
+};
+
+const groupVariant: Variants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.08 } },
+};
+
+const cardVariant: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.45, ease: EASE } },
+};
+
+function ProjectGrid({ projects }: { projects: Project[] }) {
+  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
+
+  return (
+    <motion.div
+      className={styles.projectsGrid}
+      variants={groupVariant}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, amount: 0.15 }}
+      onMouseLeave={() => setHoveredIdx(null)}
+    >
+      {projects.map((project, i) => (
+        <motion.div
+          className={styles.projectCard}
+          key={project.name}
+          variants={cardVariant}
+          onMouseEnter={() => setHoveredIdx(i)}
+          animate={{
+            opacity: hoveredIdx === null || hoveredIdx === i ? 1 : 0.45,
+            scale: hoveredIdx === i ? 1.02 : 1,
+          }}
+          whileHover={{ y: -6, borderColor: 'var(--accent-dim)' }}
+          transition={{ type: 'spring', stiffness: 300, damping: 22 }}
+        >
+          <div className={styles.projectTop}>
+            <h3 className={styles.projectName}>{project.name}</h3>
+            <span className={styles.projectId}>SYS-{String(i + 1).padStart(2, '0')}</span>
+          </div>
+          <p className={styles.projectDesc}>{project.description}</p>
+          <div className={styles.techRow}>
+            {project.technologies.map((t) => (
+              <span className={styles.techTag} key={t}>
+                {t}
+              </span>
+            ))}
+          </div>
+          <div className={styles.projectLinks}>
+            {project.demo_url && (
+              <a
+                href={project.demo_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles.projectLink}
+              >
+                Live demo
+              </a>
+            )}
+            <a
+              href={project.repo_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.projectLink}
+            >
+              {project.backend_repo_url ? 'Frontend repo' : 'View code'}
+            </a>
+            {project.backend_repo_url && (
+              <a
+                href={project.backend_repo_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles.projectLink}
+              >
+                Backend repo
+              </a>
+            )}
+          </div>
+        </motion.div>
+      ))}
+    </motion.div>
+  );
+}
+
 export default function Home() {
-  const [visible, setVisible] = useState<Set<string>>(new Set());
-  const observerRef = useRef<IntersectionObserver | null>(null);
+  const heroRef = useRef<HTMLElement>(null);
 
-  useEffect(() => {
-    observerRef.current = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setVisible((prev) => new Set(prev).add(entry.target.id));
-          }
-        });
-      },
-      { threshold: 0.12 }
-    );
-
-    document.querySelectorAll('[data-observe]').forEach((el) => {
-      observerRef.current?.observe(el);
-    });
-
-    return () => observerRef.current?.disconnect();
-  }, []);
-
-  const isVisible = (id: string) => visible.has(id);
+  const handleHeroMove = (e: MouseEvent<HTMLElement>) => {
+    const rect = heroRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    heroRef.current?.style.setProperty('--mx', `${x}%`);
+    heroRef.current?.style.setProperty('--my', `${y}%`);
+  };
 
   return (
     <>
       {/* Hero */}
-      <section className={styles.hero}>
+      <section className={styles.hero} ref={heroRef} onMouseMove={handleHeroMove}>
+        <div className={styles.heroGlow} aria-hidden="true" />
         <div className="container">
           <div className={styles.heroGrid}>
             <div>
-              <span className="eyebrow">Full-stack developer</span>
-              <h1 className={styles.heroTitle}>
+              <motion.span
+                className="eyebrow"
+                initial="hidden"
+                animate="visible"
+                custom={0}
+                variants={fadeUp}
+              >
+                Full-stack developer
+              </motion.span>
+
+              <motion.h1
+                className={styles.heroTitle}
+                initial="hidden"
+                animate="visible"
+                custom={1}
+                variants={fadeUp}
+              >
                 Hi, I&apos;m <span className={styles.accent}>Mohammed Elbardan</span>
-              </h1>
-              <p className={styles.heroLead}>
+              </motion.h1>
+
+              <motion.p
+                className={styles.heroLead}
+                initial="hidden"
+                animate="visible"
+                custom={2}
+                variants={fadeUp}
+              >
                 I build complete web and mobile systems &mdash; from Laravel and PHP
                 APIs on the backend, to Next.js and Flutter interfaces on the front.
-              </p>
-              <div className={styles.ctaRow}>
-                <a href="#projects" className="btn btn-primary">
+              </motion.p>
+
+              <motion.div
+                className={styles.ctaRow}
+                initial="hidden"
+                animate="visible"
+                custom={3}
+                variants={fadeUp}
+              >
+                <MagneticButton href="#projects" className="btn btn-primary">
                   View projects
-                </a>
-                <a href="#contact" className="btn btn-outline">
+                </MagneticButton>
+                <MagneticButton href="#contact" className="btn btn-outline">
                   Get in touch
-                </a>
-              </div>
+                </MagneticButton>
+              </motion.div>
             </div>
 
-            <div className={styles.stackDiagram}>
-              <div className={styles.stackLayer}>
-                <span className={styles.stackLayerLabel}>01 &mdash; INTERFACE</span>
-                <span className={styles.stackLayerName}>Frontend</span>
-                <span className={styles.stackLayerTech}>Next.js / TS / Vue</span>
-              </div>
-              <div className={styles.stackLayer}>
-                <span className={styles.stackLayerLabel}>02 &mdash; SERVICE</span>
-                <span className={styles.stackLayerName}>Backend</span>
-                <span className={styles.stackLayerTech}>Laravel / PHP</span>
-              </div>
-              <div className={styles.stackLayer}>
-                <span className={styles.stackLayerLabel}>03 &mdash; DATA</span>
-                <span className={styles.stackLayerName}>Storage</span>
-                <span className={styles.stackLayerTech}>MySQL</span>
-              </div>
-              <div className={styles.stackLayer}>
-                <span className={styles.stackLayerLabel}>04 &mdash; DEVICE</span>
-                <span className={styles.stackLayerName}>Mobile</span>
-                <span className={styles.stackLayerTech}>Flutter / Dart</span>
-              </div>
-            </div>
+            <motion.div
+              className={styles.stackDiagram}
+              initial="hidden"
+              animate="visible"
+              variants={{ visible: { transition: { staggerChildren: 0.15, delayChildren: 0.3 } } }}
+            >
+              {stackLayers.map((layer) => (
+                <motion.div
+                  className={styles.stackLayer}
+                  key={layer.name}
+                  variants={{
+                    hidden: { opacity: 0, x: 24 },
+                    visible: { opacity: 1, x: 0, transition: { duration: 0.5, ease: EASE } },
+                  }}
+                  whileHover={{ x: -4, borderColor: 'var(--accent-dim)' }}
+                >
+                  <span className={styles.stackLayerLabel}>{layer.tag}</span>
+                  <span className={styles.stackLayerName}>{layer.name}</span>
+                  <span className={styles.stackLayerTech}>{layer.tech}</span>
+                </motion.div>
+              ))}
+            </motion.div>
           </div>
         </div>
       </section>
 
       {/* About */}
-      <section
+      <motion.section
         id="about"
-        data-observe
-        className={`${styles.section} ${isVisible('about') ? styles.sectionVisible : ''}`}
+        className={styles.section}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.2 }}
+        variants={sectionVariant}
       >
         <div className="container">
           <span className="eyebrow">About</span>
@@ -191,27 +360,37 @@ export default function Home() {
                 to hand off.
               </p>
             </div>
-            <div id="skills" className={styles.skillCols}>
+            <motion.div
+              id="skills"
+              className={styles.skillCols}
+              variants={groupVariant}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.3 }}
+            >
               {Object.entries(skills).map(([col, items]) => (
-                <div key={col} className={styles.skillCol}>
+                <motion.div className={styles.skillCol} key={col} variants={cardVariant}>
                   <h4>{col}</h4>
                   <ul>
                     {items.map((item) => (
                       <li key={item}>{item}</li>
                     ))}
                   </ul>
-                </div>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* Projects */}
-      <section
+      <motion.section
         id="projects"
-        data-observe
-        className={`${styles.section} ${isVisible('projects') ? styles.sectionVisible : ''}`}
+        className={styles.section}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.1 }}
+        variants={sectionVariant}
       >
         <div className="container">
           <div className={styles.sectionHead}>
@@ -222,56 +401,7 @@ export default function Home() {
           {projectGroups.map((group) => (
             <div className={styles.projectGroup} key={group.label}>
               <span className={styles.groupLabel}>{group.label}</span>
-              <div className={styles.projectsGrid}>
-                {group.projects.map((project, i) => (
-                  <div className={styles.projectCard} key={project.name}>
-                    <div className={styles.projectTop}>
-                      <h3 className={styles.projectName}>{project.name}</h3>
-                      <span className={styles.projectId}>
-                        SYS-{String(i + 1).padStart(2, '0')}
-                      </span>
-                    </div>
-                    <p className={styles.projectDesc}>{project.description}</p>
-                    <div className={styles.techRow}>
-                      {project.technologies.map((t) => (
-                        <span className={styles.techTag} key={t}>
-                          {t}
-                        </span>
-                      ))}
-                    </div>
-                    <div className={styles.projectLinks}>
-                      {project.demo_url && (
-                        <a
-                          href={project.demo_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className={styles.projectLink}
-                        >
-                          Live demo
-                        </a>
-                      )}
-                      <a
-                        href={project.repo_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={styles.projectLink}
-                      >
-                        {project.backend_repo_url ? 'Frontend repo' : 'View code'}
-                      </a>
-                      {project.backend_repo_url && (
-                        <a
-                          href={project.backend_repo_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className={styles.projectLink}
-                        >
-                          Backend repo
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <ProjectGrid projects={group.projects} />
             </div>
           ))}
 
@@ -284,13 +414,16 @@ export default function Home() {
             View all repositories on GitHub &rarr;
           </a>
         </div>
-      </section>
+      </motion.section>
 
       {/* Contact */}
-      <section
+      <motion.section
         id="contact"
-        data-observe
-        className={`${styles.section} ${isVisible('contact') ? styles.sectionVisible : ''}`}
+        className={styles.section}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.3 }}
+        variants={sectionVariant}
       >
         <div className="container">
           <div className={styles.contactInner}>
@@ -302,15 +435,15 @@ export default function Home() {
               Open to new opportunities and interesting problems. The fastest
               way to reach me is email.
             </p>
-            <a
+            <MagneticButton
               href="mailto:mohammedelbardan82@gmail.com?subject=Let's%20Connect%20-%20From%20Your%20Portfolio"
               className="btn btn-primary"
             >
               Say hello
-            </a>
+            </MagneticButton>
           </div>
         </div>
-      </section>
+      </motion.section>
     </>
   );
 }

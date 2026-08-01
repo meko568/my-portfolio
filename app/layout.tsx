@@ -24,6 +24,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
       <body>
+        <div className="scan-line" aria-hidden="true" />
         <SiteHeader navLinks={navLinks} />
         <main>{children}</main>
         <footer className="site-footer">
